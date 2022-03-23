@@ -20,4 +20,12 @@ make migrate-up
 make run
 ```
 
+### В отдельном терминале запускается Subscriber: 
+```
+go run cmd/sub.go
+```
 
+### В отдельном терминале запускается Publisher: 
+```
+go run cmd/sub.go
+```
