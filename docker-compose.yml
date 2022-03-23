@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  wb-orders:
+    build: ./
+    command: ./cmd/wait-for-postgres.sh db ./cmd/wait-for-redis.sh rd 6379 ./wb-orders-test0 nt
+    ports:
+      - 8089:8089
+    depends_on:
+      - db
+      - rd
+      - nt
+    environment:
+      - DB_PASSWORD=garrix
+      - RD_PASSWORD=
+
+  db:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=garrix
+    ports:
+      - 5436:5432
+  rd:
+    restart: always
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - ./config/redis.conf:/redis.conf
+    command: ["redis-server", "/redis.conf"]
+  nt:
+    restart: always
+    image: nats-streaming:alpine
+    ports:
+      - 4222:4222
+      - 8222:8222
+    command: ["nats-streaming-server", "-cid",  "prod", "-store", "file", "-dir",  "store"]
+
+
+
+
